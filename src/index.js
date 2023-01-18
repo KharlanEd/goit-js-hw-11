@@ -1,7 +1,7 @@
 
 
 import Notiflix from 'notiflix';
-import { getAxios } from '../src/sass/js/fetch'
+import { getAxios } from './js/fetch'
 import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
 
@@ -26,10 +26,10 @@ async function onClick(evt) {
 
   cleanGallery()
  
-
+try{
   const trimInput = input.value.trim()
   if (trimInput !== '') {
-    getAxios(trimInput, pageNum).then(data => {
+   const data = await getAxios(trimInput, pageNum) 
       if (data.hits.length === 0) {
         Notiflix.Notify.failure(
           'Sorry, there are no images matching your search query. Please try again.'
@@ -40,31 +40,39 @@ async function onClick(evt) {
         btnLoadMore.style.display = 'block';
         gallerySimpleLightbox.refresh();
       }
-    })
+    }
 
   }
-
+catch (error) {
+    console.error(error);
+  
+  }
 }
 
 async function pagClick() {
+  
   pageNum++;
   btnLoadMore.style.display = "none"
+  try{
   const trimInput = input.value.trim()
   if (trimInput !== '') {
-    getAxios(trimInput, pageNum).then(data => {
+   const data = await getAxios(trimInput, pageNum) 
       if (data.hits.length === 0) {
         Notiflix.Notify.failure(
           'Sorry, there are no images matching your search query. Please try again.'
         )
       } else {
         rendrList(data.hits);
-        Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`)
+       
         btnLoadMore.style.display = 'block';
         gallerySimpleLightbox.refresh();
-
       }
-    })
+    }
 
+  }
+catch (error) {
+    console.error(error);
+  
   }
 }
 
@@ -90,7 +98,7 @@ async function rendrList(hits) {
   </div>
 </div>`
   }).join('');
-  imgList.innerHTML += marcup;
+  imgList.insertAdjacentHTML('beforeend',marcup)
 }
 
 
